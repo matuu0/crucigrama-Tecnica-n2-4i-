@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Crucigrama - Juego público</title>
+<style>
+body{font-family:sans-serif;background:#0a0f1a;color:white;margin:0;padding:20px}
+.entry{padding:8px;border:1px solid #555;margin:4px;border-radius:6px}
+.btn{padding:8px 12px;margin:4px;background:#1e3a8a;color:white;border:none;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+<h1>Crucigrama – Versión Corregida</h1>
+<div id="entries"></div>
+<div id="clues"></div>
+<div id="log" style="white-space:pre-wrap;margin-top:20px"></div>
+
+<script>
+function normalize(s){
+  if(!s) return "";
+  s = s.normalize("NFKD").replace(/[\u0300-\u036f]/g,"");
+  return s.toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+const accepted={
+1:["diafragma","diafragmas"],
+2:["anillo"],
+3:["pastilla","pastillas"],
+4:["inyeccion","inyectable"],
+5:["infeccion"],
+6:["condon","condom"],
+7:["calendario"],
+8:["parche"],
+9:["sexualidad"],
+10:["espermicida"],
+11:["implante"],
+12:["diu"],
+13:["vasectomia"],
+14:["pildoras","pildora"],
+15:["abstinencia"]
+};
+
+Object.keys(accepted).forEach(k=>{
+ accepted[k]=accepted[k].map(normalize);
+});
+
+const replacements={
+1:"D I A F R A G M A S",
+2:"A N I L L O",
+3:"P A S T I L L A S",
+4:"I N Y E C C I O N",
+5:"I N F E C C I O N",
+6:"C O N D O N",
+7:"C A L E N D A R I O",
+8:"P A R C H E",
+9:"S E X U A L I D A D",
+10:"E S P E R M I C I D A",
+11:"I M P L A N T E",
+12:"D I U",
+13:"V A S E C T O M I A",
+14:"P I L D O R A S",
+15:"A B S T I N E N C I A"
+};
+
+const clues={
+1:"dispositivo de silicona con forma de cúpula",
+2:"método anticonceptivo femenino flexible",
+3:"se toman el día después, son de emergencia",
+4:"hormonal cada 3 meses",
+5:"cuando ingresa un germen genera una...",
+6:"funda de látex para el pene",
+7:"método de calendario",
+8:"parche hormonal",
+9:"modo de experimentar amor y deseo",
+10:"sustancia que destruye espermatozoides",
+11:"varilla debajo de la piel",
+12:"dispositivo en forma de T",
+13:"cirugía que corta conductos deferentes",
+14:"pastillas que inhiben ovulación",
+15:"decidir no tener relaciones"
+};
+
+let state={A:"_ _ A _ _ _ _ _ _",N:"_ N _ _ _",T:"_ _ _ T _ _ _ _ _",I1:"I _ _ _ _ _ _ _ _",
+C:"_ _ _ _ C _ _ _ _",O:"_ O _ _ _ _",N1:"_ _ _ _ N _ _ _ _ _",C1:"_ _ _ C _ _",
+E:"_ E _ _ _ _ _ _ _ _",P1:"_ _ P _ _ _ _ _ _ _ _",T1:"_ _ _ _ _ _ T _",I2:"_ I _",V:"V _ _ _ _ _ _ _ _ _",
+O1:"_ _ _ _ O _ _ _",S:"_ _ S _ _ _ _ _ _ _ _",solvedCount:0};
+
+function render(){
+ const box=document.getElementById("entries");
+ box.innerHTML="";
+ const list=[
+  {n:1,key:"A"},{n:2,key:"N"},{n:3,key:"T"},{n:4,key:"I1"},
+  {n:5,key:"C"},{n:6,key:"O"},{n:7,key:"N1"},{n:8,key:"C1"},
+  {n:9,key:"E"},{n:10,key:"P1"},{n:11,key:"T1"},{n:12,key:"I2"},
+  {n:13,key:"V"},{n:14,key:"O1"},{n:15,key:"S"}
+ ];
+ list.forEach(x=>{
+   const d=document.createElement("div");
+   d.className="entry";
+   d.textContent="#"+x.n+" — "+state[x.key];
+   d.onclick=()=>ask(x.n,x.key);
+   box.appendChild(d);
+ });
+}
+
+function ask(num,key){
+ let r=prompt("Pista: "+clues[num]+"\n\nEscribí tu respuesta:");
+ if(!r) return;
+ if(accepted[num].includes(normalize(r))){
+   state[key]=replacements[num];
+   state.solvedCount++;
+   log("Correcto (#"+num+"): "+r);
+ } else {
+   log("Incorrecto (#"+num+"): "+r);
+ }
+ render();
+}
+
+function log(t){
+ document.getElementById("log").textContent+=t+"\n";
+}
+
+render();
+</script>
+</body>
+</html>
